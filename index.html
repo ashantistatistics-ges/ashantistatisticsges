@@ -438,13 +438,16 @@
   .modal-scrim {
     display: none; position: fixed; inset: 0; z-index: 60;
     background: rgba(8,17,31,0.5);
-    align-items: center; justify-content: center; padding: 20px;
+    align-items: flex-start; justify-content: center; padding: 20px;
+    overflow-y: auto;
   }
   .modal-scrim.show { display: flex; }
   .modal-card {
     width: min(420px, 100%); background: var(--card); border-radius: 14px;
     padding: 26px 24px; box-shadow: 0 24px 60px rgba(8,17,31,0.35);
     animation: popIn 0.25s cubic-bezier(.34,1.56,.64,1) both;
+    max-height: calc(100vh - 40px); overflow-y: auto;
+    margin: 20px auto;
   }
   @keyframes popIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
   .modal-card .modal-icon {
@@ -555,6 +558,75 @@
     .letterhead-inner, .done-ring, .modal-card { animation: none !important; }
     * { transition-duration: 0.01ms !important; }
   }
+
+  /* ---- Submitted MMDAs list / edit-verification flow ---- */
+  .submitted-bar {
+    display: flex; align-items: center; justify-content: center;
+    padding: 9px 14px;
+    background: #EAF1FB;
+    border-bottom: 1px solid rgba(18,59,122,0.18);
+  }
+  .submitted-list-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; border: 1px solid rgba(18,59,122,0.3);
+    color: #123B7A; font-family: inherit; font-size: 12.5px; font-weight: 600;
+    padding: 7px 16px; border-radius: 999px; cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .submitted-list-btn:hover { background: #E9EEF7; }
+  .submitted-list-btn:active { transform: scale(0.98); }
+  .submitted-list-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .submitted-list-btn svg { width: 15px; height: 15px; }
+  .submitted-count-badge {
+    background: #123B7A; color: #fff; border-radius: 999px;
+    font-size: 11px; font-weight: 700; padding: 1px 8px; min-width: 18px; text-align: center;
+  }
+
+  .modal-card.wide { width: min(560px, 100%); }
+  .modal-card.wide h3 { margin-bottom: 4px; }
+  .modal-card.wide p.sub { font-size: 12.5px; color: var(--ink-soft); margin: 0 0 16px; }
+
+  .submitted-list { max-height: 50vh; overflow-y: auto; margin: 0 -4px; padding: 0 4px; }
+  .submitted-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 11px 4px; border-bottom: 1px solid var(--line);
+  }
+  .submitted-row:last-child { border-bottom: none; }
+  .submitted-row-info { min-width: 0; }
+  .submitted-row-name { font-weight: 600; color: var(--navy); font-size: 13.5px; }
+  .submitted-row-time { font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
+  .submitted-row-edit {
+    flex-shrink: 0; background: #FBF3E4; border: 1px solid rgba(138,90,11,0.3);
+    color: #8A5A0B; font-family: inherit; font-size: 12px; font-weight: 600;
+    padding: 6px 14px; border-radius: 999px; cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .submitted-row-edit:hover { background: #F6E9D1; }
+  .submitted-empty { text-align: center; color: var(--ink-faint); font-size: 13px; padding: 24px 10px; }
+
+  .verify-note {
+    display: flex; gap: 10px; background: #F1F5F9; border: 1px solid rgba(18,32,54,0.12);
+    border-radius: 10px; padding: 11px 13px; margin-bottom: 16px; font-size: 12.5px;
+    color: var(--ink-soft); line-height: 1.5;
+  }
+  .verify-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; margin-bottom: 6px; }
+  .verify-fields .field-row.three { grid-column: 1 / -1; }
+  @media (max-width: 520px) { .verify-fields { grid-template-columns: 1fr; } }
+
+  .edit-mode-banner {
+    display: none; align-items: center; justify-content: space-between; gap: 12px;
+    background: linear-gradient(135deg, #FBF3E4 0%, #FDF9F0 100%);
+    border: 1px solid rgba(138,90,11,0.3);
+    border-radius: 12px; padding: 12px 16px; margin: 0 0 14px;
+    font-size: 13px; color: #8A5A0B; font-weight: 600;
+  }
+  .edit-mode-banner.show { display: flex; }
+  .edit-mode-banner .cancel-edit-btn {
+    background: #fff; border: 1px solid rgba(138,90,11,0.35); color: #8A5A0B;
+    font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+    padding: 6px 13px; border-radius: 999px; flex-shrink: 0;
+  }
+  .edit-mode-banner .cancel-edit-btn:hover { background: #F6E9D1; }
 </style>
 
 </head>
@@ -577,6 +649,14 @@
   <span class="dot"></span><span id="liveClockText">—</span>
 </div>
 
+<div class="submitted-bar">
+  <button type="button" class="submitted-list-btn" id="viewSubmittedBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M9 16h4M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M13 2v6h6"/></svg>
+    <span>Submitted MMDAs</span>
+    <span class="submitted-count-badge" id="submittedCountBadge">…</span>
+  </button>
+</div>
+
 <div class="nav-wrap" id="navWrap">
   <div class="nav-scroll">
     <button type="button" class="nav-pill active incomplete" data-target="sec-mmda"><span class="pill-dot"></span>Identification<span class="pill-pct"></span></button>
@@ -591,6 +671,10 @@
 </div>
 
 <div class="wrap">
+  <div class="edit-mode-banner" id="editModeBanner">
+    <span id="editModeBannerText">Editing return for —</span>
+    <button type="button" class="cancel-edit-btn" id="cancelEditBtn">Cancel edit</button>
+  </div>
   <form id="mmdaForm" novalidate>
 
     <!-- 1. MMDA Identification -->
@@ -635,7 +719,7 @@
           <div class="field">
             <label for="mmdeoEmis">EMIS Code of MMDEO<span class="req">*</span></label>
             <input type="text" id="mmdeoEmis" inputmode="numeric" pattern="[0-9]*" required />
-            <span class="hint">Official EMIS code assigned to the MMDEO.</span>
+            <span class="hint">Official EMIS code assigned to the MMDEO. Also used later to verify your identity if you need to edit this return.</span>
           </div>
                    <div class="field">
             <label for="mmdeoGps">GhanaPOST GPS of MMDEO<span class="req">*</span></label>
@@ -677,10 +761,12 @@
           <div class="field">
             <label for="directorStaffId">Staff ID</label>
             <input type="text" id="directorStaffId" />
+            <span class="hint">Used later to verify your identity if you need to edit this return.</span>
           </div>
           <div class="field">
             <label for="directorPhone">Telephone Number<span class="req">*</span></label>
             <input type="text" id="directorPhone" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="0544748857" required />
+            <span class="hint">Used later to verify your identity if you need to edit this return.</span>
           </div>
         </div>
       </div>
@@ -725,6 +811,7 @@
           <div class="field">
             <label for="officerStaffId">Staff ID<span class="req">*</span></label>
             <input type="text" id="officerStaffId" required />
+            <span class="hint">Used later to verify your identity if you need to edit this return.</span>
           </div>
         </div>
         <div class="field-row">
@@ -742,13 +829,14 @@
         </div>
         <div class="field-row three">
           <div class="field">
-            <label for="dobDay">Day of Birth</label>
+            <label for="dobDay">Day of Birth <strong>(Statistics Officer)</strong></label>
             <select id="dobDay">
               <option value="">— Day —</option>
             </select>
+            <span class="hint">This is the Statistics Officer's own date of birth — not the Director's. Used later to verify your identity if you need to edit this return.</span>
           </div>
           <div class="field">
-            <label for="dobMonth">Month of Birth</label>
+            <label for="dobMonth">Month of Birth <strong>(Statistics Officer)</strong></label>
             <select id="dobMonth">
               <option value="">— Month —</option>
               <option value="1">January</option><option value="2">February</option><option value="3">March</option>
@@ -758,7 +846,7 @@
             </select>
           </div>
           <div class="field">
-            <label for="dobYear">Year of Birth</label>
+            <label for="dobYear">Year of Birth <strong>(Statistics Officer)</strong></label>
             <select id="dobYear">
               <option value="">— Year —</option>
             </select>
@@ -965,6 +1053,81 @@
   </div>
 </div>
 
+<!-- Submitted MMDAs list -->
+<div class="modal-scrim" id="submittedListScrim">
+  <div class="modal-card wide">
+    <span class="modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M9 16h4M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M13 2v6h6"/></svg>
+    </span>
+    <h3>Submitted MMDAs</h3>
+    <p class="sub">MMDAs that have already submitted a return, with the time of their most recent submission. Click Edit against an MMDA to update its return.</p>
+    <div class="submitted-list" id="submittedListBody">
+      <div class="submitted-empty">Loading…</div>
+    </div>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button type="button" class="modal-btn-cancel" id="submittedListClose" style="flex:none; padding-left:22px; padding-right:22px;">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit verification -->
+<div class="modal-scrim" id="editVerifyScrim">
+  <div class="modal-card wide">
+    <span class="modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    </span>
+    <h3>Verify your identity</h3>
+    <p class="sub">To edit the return for <strong id="editVerifyMmdaName"></strong>, confirm these details exactly as they were originally submitted.</p>
+    <div class="verify-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <span>All five details below must match what was submitted for this MMDA. If anything doesn't match, editing will be denied.</span>
+    </div>
+    <div class="verify-fields">
+      <div class="field">
+        <label for="verifyEmis">EMIS Code of MMDEO</label>
+        <input type="text" id="verifyEmis" inputmode="numeric" pattern="[0-9]*" />
+      </div>
+      <div class="field">
+        <label for="verifyDirectorStaffId">Staff ID of Director of Education</label>
+        <input type="text" id="verifyDirectorStaffId" />
+      </div>
+      <div class="field">
+        <label for="verifyDirectorPhone">Telephone Number of Director of Education</label>
+        <input type="text" id="verifyDirectorPhone" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="0544748857" />
+      </div>
+      <div class="field">
+        <label for="verifyOfficerStaffId">Staff ID of Officer</label>
+        <input type="text" id="verifyOfficerStaffId" />
+      </div>
+      <div class="field-row three">
+        <div class="field">
+          <label for="verifyDobDay">Day of Birth <strong>(Statistics Officer)</strong></label>
+          <select id="verifyDobDay"><option value="">— Day —</option></select>
+        </div>
+        <div class="field">
+          <label for="verifyDobMonth">Month of Birth <strong>(Statistics Officer)</strong></label>
+          <select id="verifyDobMonth">
+            <option value="">— Month —</option>
+            <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+            <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+            <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+            <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="verifyDobYear">Year of Birth <strong>(Statistics Officer)</strong></label>
+          <select id="verifyDobYear"><option value="">— Year —</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="form-message" id="verifyMessage"></div>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button type="button" class="modal-btn-cancel" id="editVerifyCancel">Cancel</button>
+      <button type="button" class="modal-btn-confirm" id="editVerifySubmit">Verify &amp; Edit</button>
+    </div>
+  </div>
+</div>
+
 <!-- Submitting overlay -->
 <div class="loading-scrim" id="loadingScrim">
   <div class="loading-card">
@@ -975,7 +1138,7 @@
 
 <script>
   // ======== CONFIG ========
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1kArcCpoLw3MkHEXoqdB8UBjkDzQIs27AMoz5enx41ONv9oLn70P5tMfaZkUuRRqz/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywFUrOMZNz-irx8evXT5mSQMG2Lkvh1qPtsvPBOsG0IokUv0L3vU0LsyFKOaL2HxYg/exec";
 
   // ======== MMDA LIST (status derived from the name's own suffix) ========
   const MMDA_LIST = [
@@ -1018,6 +1181,11 @@
   let mmdaConfirmed = false;
   let pendingMmdaValue = "";
   let lastSubmittedPayload = null;
+
+  // ======== EDIT MODE STATE ========
+  let editMode = false;
+  let editMmda = "";
+  let editVerifyCreds = null; // the verification snapshot the server matched, sent back with the update
 
   statusSelect.addEventListener("change", () => {
     const status = statusSelect.value;
@@ -1311,26 +1479,33 @@
   }
   wireEmailSuggestions("officerEmail", "officerEmailSuggestions");
 
-  // Day/Year of Birth as native selects
-  const dobDaySelect = document.getElementById("dobDay");
-  for (let d = 1; d <= 31; d++) {
-    const opt = document.createElement("option");
-    opt.value = String(d);
-    opt.textContent = String(d);
-    dobDaySelect.appendChild(opt);
-  }
-
-  const dobYearSelect = document.getElementById("dobYear");
+  // Day/Year of Birth as native selects (shared helper — also used for the edit-verification modal)
   const currentYear = new Date().getFullYear();
-  for (let y = currentYear - 16; y >= currentYear - 80; y--) {
-    const opt = document.createElement("option");
-    opt.value = String(y);
-    opt.textContent = String(y);
-    dobYearSelect.appendChild(opt);
+  function fillDaySelect(sel) {
+    for (let d = 1; d <= 31; d++) {
+      const opt = document.createElement("option");
+      opt.value = String(d);
+      opt.textContent = String(d);
+      sel.appendChild(opt);
+    }
   }
+  function fillYearSelect(sel) {
+    for (let y = currentYear - 16; y >= currentYear - 80; y--) {
+      const opt = document.createElement("option");
+      opt.value = String(y);
+      opt.textContent = String(y);
+      sel.appendChild(opt);
+    }
+  }
+  const dobDaySelect = document.getElementById("dobDay");
+  const dobYearSelect = document.getElementById("dobYear");
+  fillDaySelect(dobDaySelect);
+  fillYearSelect(dobYearSelect);
+  fillDaySelect(document.getElementById("verifyDobDay"));
+  fillYearSelect(document.getElementById("verifyDobYear"));
 
   // Digits-only enforcement on numeric-keyboard text inputs
-  ["mmdeoEmis","directorPhone","officerPhone"].forEach(id => {
+  ["mmdeoEmis","directorPhone","officerPhone","verifyEmis","verifyDirectorPhone"].forEach(id => {
     const el = document.getElementById(id);
     el.addEventListener("input", () => { el.value = el.value.replace(/\D/g, ""); });
   });
@@ -1441,6 +1616,252 @@
     return ok && phoneOk1 && phoneOk2 && emailOk && gpsOk && mmdaConfirmed;
   }
 
+  // ======== SUBMITTED MMDAS LIST & EDIT VERIFICATION ========
+  const submittedListScrim = document.getElementById("submittedListScrim");
+  const submittedListBody = document.getElementById("submittedListBody");
+  const submittedCountBadge = document.getElementById("submittedCountBadge");
+  const editVerifyScrim = document.getElementById("editVerifyScrim");
+  const editVerifyMmdaName = document.getElementById("editVerifyMmdaName");
+  const verifyMessage = document.getElementById("verifyMessage");
+  const editModeBanner = document.getElementById("editModeBanner");
+  const editModeBannerText = document.getElementById("editModeBannerText");
+
+  let pendingEditMmda = "";
+
+  function escapeHtml(str) {
+    return String(str || "").replace(/[&<>"']/g, ch => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[ch]));
+  }
+
+  async function fetchSubmittedList() {
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "list" })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || "Could not load the list.");
+      return data.records || [];
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function renderSubmittedList(records) {
+    if (records === null) {
+      submittedListBody.innerHTML = '<div class="submitted-empty">Couldn\'t load the list. Please try again.</div>';
+      return;
+    }
+    submittedCountBadge.textContent = String(records.length);
+    if (records.length === 0) {
+      submittedListBody.innerHTML = '<div class="submitted-empty">No MMDAs have submitted a return yet.</div>';
+      return;
+    }
+    submittedListBody.innerHTML = records.map(r => {
+      const when = r.timestamp ? new Date(r.timestamp).toLocaleString() : "—";
+      return '<div class="submitted-row">' +
+        '<div class="submitted-row-info">' +
+          '<div class="submitted-row-name">' + escapeHtml(r.mmda) + '</div>' +
+          '<div class="submitted-row-time">Submitted ' + escapeHtml(when) + '</div>' +
+        '</div>' +
+        '<button type="button" class="submitted-row-edit" data-mmda="' + escapeHtml(r.mmda) + '">Edit</button>' +
+      '</div>';
+    }).join("");
+  }
+
+  async function refreshSubmittedList() {
+    const records = await fetchSubmittedList();
+    renderSubmittedList(records);
+    return records;
+  }
+
+  document.getElementById("viewSubmittedBtn").addEventListener("click", async () => {
+    submittedListBody.innerHTML = '<div class="submitted-empty">Loading…</div>';
+    submittedListScrim.classList.add("show");
+    await refreshSubmittedList();
+  });
+  document.getElementById("submittedListClose").addEventListener("click", () => {
+    submittedListScrim.classList.remove("show");
+  });
+
+  submittedListBody.addEventListener("click", (e) => {
+    const btn = e.target.closest(".submitted-row-edit");
+    if (!btn) return;
+    pendingEditMmda = btn.dataset.mmda;
+    submittedListScrim.classList.remove("show");
+    openEditVerify(pendingEditMmda);
+  });
+
+  function openEditVerify(mmda) {
+    editVerifyMmdaName.textContent = mmda;
+    verifyMessage.className = "form-message";
+    ["verifyEmis","verifyDirectorStaffId","verifyDirectorPhone","verifyOfficerStaffId"].forEach(id => {
+      document.getElementById(id).value = "";
+    });
+    document.getElementById("verifyDobDay").value = "";
+    document.getElementById("verifyDobMonth").value = "";
+    document.getElementById("verifyDobYear").value = "";
+    editVerifyScrim.classList.add("show");
+  }
+
+  document.getElementById("editVerifyCancel").addEventListener("click", () => {
+    editVerifyScrim.classList.remove("show");
+  });
+
+  function showVerifyMessage(text, type) {
+    verifyMessage.textContent = text;
+    verifyMessage.className = "form-message show " + type;
+  }
+
+  document.getElementById("editVerifySubmit").addEventListener("click", async () => {
+    const verifyPayload = {
+      mmdeoEmis: document.getElementById("verifyEmis").value.trim(),
+      directorStaffId: document.getElementById("verifyDirectorStaffId").value.trim(),
+      directorPhone: document.getElementById("verifyDirectorPhone").value.trim(),
+      officerStaffId: document.getElementById("verifyOfficerStaffId").value.trim(),
+      dobDay: document.getElementById("verifyDobDay").value.trim(),
+      dobMonth: document.getElementById("verifyDobMonth").value,
+      dobYear: document.getElementById("verifyDobYear").value.trim()
+    };
+    if (!verifyPayload.mmdeoEmis || !verifyPayload.directorStaffId || !verifyPayload.directorPhone ||
+        !verifyPayload.officerStaffId || !verifyPayload.dobDay || !verifyPayload.dobMonth || !verifyPayload.dobYear) {
+      showVerifyMessage("Please fill in all five verification fields.", "error");
+      return;
+    }
+    const btn = document.getElementById("editVerifySubmit");
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Verifying…";
+    showVerifyMessage("Checking your details…", "success");
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(Object.assign({ action: "verify", mmda: pendingEditMmda }, verifyPayload))
+      });
+      const data = await res.json();
+      if (!data.success) {
+        showVerifyMessage(data.error || "Verification failed. The details you entered do not match our records.", "error");
+        return;
+      }
+      editVerifyCreds = verifyPayload;
+      enterEditMode(pendingEditMmda, data.record || {});
+      editVerifyScrim.classList.remove("show");
+    } catch (err) {
+      showVerifyMessage("Something went wrong while verifying. Please try again.", "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  });
+
+  function setFieldValue(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.value = value == null ? "" : value;
+  }
+
+  function enterEditMode(mmda, record) {
+    form.reset();
+    clearAutosave();
+    document.getElementById("doneScreen").classList.remove("show");
+    form.style.display = "block";
+    document.getElementById("formMessage").className = "form-message";
+
+    // Lock the MMDA to the one being edited, skipping the confirm modal.
+    const status = record.mmdeoStatus || mmdaStatusOf(mmda);
+    statusSelect.value = status;
+    const matches = MMDA_LIST.filter(n => mmdaStatusOf(n) === status).sort();
+    mmdaSelect.innerHTML = '<option value="">— Select MMDA —</option>' +
+      matches.map(n => '<option value="' + n + '">' + n + '</option>').join("");
+    mmdaSelect.disabled = false;
+    mmdaSelect.value = mmda;
+    pendingMmdaValue = mmda;
+    mmdaConfirmed = true;
+    mmdaChipText.textContent = mmda + " (" + status + ")";
+    mmdaChip.classList.add("show");
+    mmdaSelect.style.display = "none";
+    mmdaLockedRow.querySelector("span").textContent = "Confirmed: " + mmda;
+    mmdaLockedRow.classList.add("show");
+
+    // Populate the rest of the form from the stored record.
+    setFieldValue("mmdeoEmis", record.mmdeoEmis);
+    setFieldValue("mmdeoGps", record.mmdeoGps);
+    setFieldValue("directorName", record.directorName);
+    setFieldValue("directorSex", record.directorSex);
+    setFieldValue("directorStaffId", record.directorStaffId);
+    setFieldValue("directorPhone", record.directorPhone);
+    setFieldValue("officerFirstName", record.officerFirstName);
+    setFieldValue("officerSurname", record.officerSurname);
+    setFieldValue("officerOtherNames", record.officerOtherNames);
+    setFieldValue("officerSex", record.officerSex);
+    setFieldValue("officerStaffId", record.officerStaffId);
+    setFieldValue("officerPhone", record.officerPhone);
+    setFieldValue("officerEmail", record.officerEmail);
+    setFieldValue("dobDay", record.dobDay);
+    setFieldValue("dobMonth", record.dobMonth);
+    setFieldValue("dobYear", record.dobYear);
+    setFieldValue("totalCircuits", record.totalCircuits);
+    setFieldValue("specialSchools", record.specialSchools);
+    setFieldValue("stemSchools", record.stemSchools);
+    setFieldValue("kgOnly", record.kgOnly);
+    setFieldValue("primaryOnly", record.primaryOnly);
+    setFieldValue("jhsOnly", record.jhsOnly);
+    setFieldValue("kgPrimary", record.kgPrimary);
+    setFieldValue("kgJhs", record.kgJhs);
+    setFieldValue("primaryJhs", record.primaryJhs);
+    setFieldValue("basicSchools", record.basicSchools);
+    setFieldValue("shs", record.shs);
+    setFieldValue("shts", record.shts);
+    setFieldValue("tvet", record.tvet);
+
+    Array.from(form.querySelectorAll("input, select")).forEach(updateFieldState);
+
+    editMode = true;
+    editMmda = mmda;
+    editModeBannerText.textContent = "Editing return for " + mmda + " — changes will update the existing record.";
+    editModeBanner.classList.add("show");
+    setSubmitButtonIdle();
+
+    updateProgress();
+    updateSubmitAvailability();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function exitEditMode() {
+    editMode = false;
+    editMmda = "";
+    editVerifyCreds = null;
+    editModeBanner.classList.remove("show");
+    setSubmitButtonIdle();
+  }
+
+  document.getElementById("cancelEditBtn").addEventListener("click", () => {
+    exitEditMode();
+    form.reset();
+    clearAutosave();
+    mmdaConfirmed = false;
+    pendingMmdaValue = "";
+    mmdaChip.classList.remove("show");
+    mmdaLockedRow.classList.remove("show");
+    mmdaSelect.style.display = "";
+    mmdaSelect.innerHTML = '<option value="">— Select status first —</option>';
+    mmdaSelect.disabled = true;
+    Array.from(form.querySelectorAll("input, select")).forEach(el => el.classList.remove("valid", "invalid"));
+    updateProgress();
+    updateSubmitAvailability();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // Load the list once on page load (quietly — doesn't force the modal open).
+  refreshSubmittedList();
+
+  function setSubmitButtonIdle() {
+    const btn = document.getElementById("submitBtn");
+    if (!btn) return;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2-8-8-2z"/></svg><span id="submitBtnText">' +
+      (editMode ? "Update Return" : "Submit Return") + '</span>';
+  }
+
   // ======== SUBMIT ========
   function showMessage(text, type) {
     const el = document.getElementById("formMessage");
@@ -1469,7 +1890,7 @@
       const btn = document.getElementById("submitBtn");
     btn.disabled = true;
     btn.classList.add("loading");
-    btn.innerHTML = '<span class="spinner"></span><span>Submitting…</span>';
+    btn.innerHTML = '<span class="spinner"></span><span>' + (editMode ? "Updating…" : "Submitting…") + '</span>';
     document.getElementById("loadingScrim").classList.add("show");
 
     const payload = {
@@ -1506,6 +1927,11 @@
       tvet: document.getElementById("tvet").value.trim()
     };
 
+    if (editMode) {
+      payload.action = "update";
+      payload.verify = editVerifyCreds;
+    }
+
     try {
       const res = await fetch(SCRIPT_URL, {
         method: "POST",
@@ -1516,19 +1942,23 @@
       if (!data.success) throw new Error(data.error || "Submission failed.");
 
          document.getElementById("doneText").textContent =
-        (data.message || "Your MMDA's statistics return has been recorded.");
+        (data.message || (editMode
+          ? "Your MMDA's statistics return has been updated."
+          : "Your MMDA's statistics return has been recorded."));
       document.getElementById("doneRef").innerHTML =
-        "Recorded for <strong>" + payload.mmda + "</strong> · " + new Date().toLocaleString();
+        (editMode ? "Updated for <strong>" : "Recorded for <strong>") + payload.mmda + "</strong> · " + new Date().toLocaleString();
       lastSubmittedPayload = payload;
       clearAutosave();
+      exitEditMode();
       form.style.display = "none";
       document.getElementById("doneScreen").classList.add("show");
+      refreshSubmittedList();
     } catch (err) {
       showMessage(err.message || "Something went wrong. Please try again.", "error");
     } finally {
       document.getElementById("loadingScrim").classList.remove("show");
       btn.classList.remove("loading");
-      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-8-8 18-2-8-8-2z"/></svg><span id="submitBtnText">Submit Return</span>';
+      setSubmitButtonIdle();
       updateSubmitAvailability();
     }
   });
@@ -1543,6 +1973,7 @@
 
   document.getElementById("doneEditBtn").addEventListener("click", () => {
     // Full reset — a fresh return for the next MMDA, no leftover answers.
+    exitEditMode();
     form.reset();
     clearAutosave();
 
