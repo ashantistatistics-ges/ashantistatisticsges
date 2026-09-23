@@ -759,9 +759,9 @@
         </div>
         <div class="field-row">
           <div class="field">
-            <label for="directorStaffId">Staff ID</label>
-            <input type="text" id="directorStaffId" />
-            <span class="hint">Used later to verify your identity if you need to edit this return.</span>
+            <label for="directorStaffId">Staff ID<span class="req">*</span></label>
+            <input type="text" id="directorStaffId" minlength="3" required />
+            <span class="hint">Must be at least 3 characters. Used later to verify your identity if you need to edit this return.</span>
           </div>
           <div class="field">
             <label for="directorPhone">Telephone Number<span class="req">*</span></label>
@@ -810,8 +810,8 @@
           </div>
           <div class="field">
             <label for="officerStaffId">Staff ID<span class="req">*</span></label>
-            <input type="text" id="officerStaffId" required />
-            <span class="hint">Used later to verify your identity if you need to edit this return.</span>
+            <input type="text" id="officerStaffId" minlength="3" required />
+            <span class="hint">Must be at least 3 characters. Used later to verify your identity if you need to edit this return.</span>
           </div>
         </div>
         <div class="field-row">
@@ -829,15 +829,15 @@
         </div>
         <div class="field-row three">
           <div class="field">
-            <label for="dobDay">Day of Birth <strong>(Statistics Officer)</strong></label>
-            <select id="dobDay">
+            <label for="dobDay">Day of Birth <strong>(Statistics Officer)</strong><span class="req">*</span></label>
+            <select id="dobDay" required>
               <option value="">— Day —</option>
             </select>
             <span class="hint">This is the Statistics Officer's own date of birth — not the Director's. Used later to verify your identity if you need to edit this return.</span>
           </div>
           <div class="field">
-            <label for="dobMonth">Month of Birth <strong>(Statistics Officer)</strong></label>
-            <select id="dobMonth">
+            <label for="dobMonth">Month of Birth <strong>(Statistics Officer)</strong><span class="req">*</span></label>
+            <select id="dobMonth" required>
               <option value="">— Month —</option>
               <option value="1">January</option><option value="2">February</option><option value="3">March</option>
               <option value="4">April</option><option value="5">May</option><option value="6">June</option>
@@ -846,8 +846,8 @@
             </select>
           </div>
           <div class="field">
-            <label for="dobYear">Year of Birth <strong>(Statistics Officer)</strong></label>
-            <select id="dobYear">
+            <label for="dobYear">Year of Birth <strong>(Statistics Officer)</strong><span class="req">*</span></label>
+            <select id="dobYear" required>
               <option value="">— Year —</option>
             </select>
           </div>
@@ -870,7 +870,7 @@
       <div class="section-body">
         <div class="stat-note">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-          <span>"Standalone" means the school has its own dedicated head — it is not a unit (e.g. a KG block) that shares a head with another attached level at the same site. If a KG shares a head with its attached Primary/JHS, count it under the combined category, not under KG-Only. Enter whole numbers only, and leave a field at 0 if the MMDA has none of that category.</span>
+          <span>"Standalone" means the school has its own dedicated head — it is not a unit (e.g. a KG block) that shares a head with another attached level at the same site. If a KG shares a head with its attached Primary/JHS, count it under the combined category, not under KG-Only. Enter whole numbers only. <strong>If the MMDA has none of a category, don't leave it blank — type 0 to confirm you checked and there genuinely are none.</strong></span>
         </div>
 
         <div class="stat-group-title">Circuits &amp; Cross-Cutting</div>
@@ -879,25 +879,25 @@
             <label for="totalCircuits">Total Number of Circuits<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="totalCircuits" aria-label="Decrease">−</button>
-              <input type="number" id="totalCircuits" inputmode="numeric" min="0" step="1" required />
+              <input type="number" id="totalCircuits" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="totalCircuits" aria-label="Increase">+</button>
             </div>
             <span class="hint">Official GES education circuits within this MMDA only.</span>
           </div>
           <div class="stat-field">
-            <label for="specialSchools">Number of Standalone Special Schools</label>
+            <label for="specialSchools">Number of Standalone Special Schools<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="specialSchools" aria-label="Decrease">−</button>
-              <input type="number" id="specialSchools" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="specialSchools" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="specialSchools" aria-label="Increase">+</button>
             </div>
             <span class="hint">Special Schools with their own dedicated head, at any level from KG through Second Cycle.</span>
           </div>
           <div class="stat-field">
-            <label for="stemSchools">Number of Standalone STEM Schools</label>
+            <label for="stemSchools">Number of Standalone STEM Schools<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="stemSchools" aria-label="Decrease">−</button>
-              <input type="number" id="stemSchools" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="stemSchools" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="stemSchools" aria-label="Increase">+</button>
             </div>
             <span class="hint">STEM Schools with their own dedicated head.</span>
@@ -907,64 +907,64 @@
         <div class="stat-group-title">Basic Level (Mainstream &amp; Integrated only — excludes Special Schools)</div>
         <div class="stat-grid">
           <div class="stat-field">
-            <label for="kgOnly">Number of Standalone KG-Only Schools</label>
+            <label for="kgOnly">Number of Standalone KG-Only Schools<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="kgOnly" aria-label="Decrease">−</button>
-              <input type="number" id="kgOnly" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="kgOnly" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="kgOnly" aria-label="Increase">+</button>
             </div>
             <span class="hint">KG schools with their own dedicated head — not a KG unit sharing a head with an attached Primary or JHS.</span>
           </div>
           <div class="stat-field">
-            <label for="primaryOnly">Number of Standalone Primary-Only Schools</label>
+            <label for="primaryOnly">Number of Standalone Primary-Only Schools<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="primaryOnly" aria-label="Decrease">−</button>
-              <input type="number" id="primaryOnly" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="primaryOnly" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="primaryOnly" aria-label="Increase">+</button>
             </div>
             <span class="hint">Schools offering Primary only (no KG, no JHS), with their own dedicated head.</span>
           </div>
           <div class="stat-field">
-            <label for="jhsOnly">Number of Standalone JHS-Only Schools</label>
+            <label for="jhsOnly">Number of Standalone JHS-Only Schools<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="jhsOnly" aria-label="Decrease">−</button>
-              <input type="number" id="jhsOnly" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="jhsOnly" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="jhsOnly" aria-label="Increase">+</button>
             </div>
             <span class="hint">JHS schools with their own dedicated head — not a JHS unit sharing a head with an attached KG or Primary.</span>
           </div>
           <div class="stat-field">
-            <label for="kgPrimary">Number of Standalone KG &amp; Primary Schools</label>
+            <label for="kgPrimary">Number of Standalone KG &amp; Primary Schools<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="kgPrimary" aria-label="Decrease">−</button>
-              <input type="number" id="kgPrimary" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="kgPrimary" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="kgPrimary" aria-label="Increase">+</button>
             </div>
             <span class="hint">Schools offering KG and Primary (no JHS) under one dedicated head.</span>
           </div>
           <div class="stat-field">
-            <label for="kgJhs">Number of Standalone KG &amp; JHS Schools</label>
+            <label for="kgJhs">Number of Standalone KG &amp; JHS Schools<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="kgJhs" aria-label="Decrease">−</button>
-              <input type="number" id="kgJhs" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="kgJhs" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="kgJhs" aria-label="Increase">+</button>
             </div>
             <span class="hint">Schools offering KG and JHS (no Primary) under one dedicated head.</span>
           </div>
           <div class="stat-field">
-            <label for="primaryJhs">Number of Standalone Primary &amp; JHS Schools</label>
+            <label for="primaryJhs">Number of Standalone Primary &amp; JHS Schools<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="primaryJhs" aria-label="Decrease">−</button>
-              <input type="number" id="primaryJhs" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="primaryJhs" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="primaryJhs" aria-label="Increase">+</button>
             </div>
             <span class="hint">Schools offering Primary and JHS (no KG) under one dedicated head.</span>
           </div>
           <div class="stat-field">
-            <label for="basicSchools">Number of Standalone Full Basic Schools (KG–JHS)</label>
+            <label for="basicSchools">Number of Standalone Full Basic Schools (KG–JHS)<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="basicSchools" aria-label="Decrease">−</button>
-              <input type="number" id="basicSchools" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="basicSchools" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="basicSchools" aria-label="Increase">+</button>
             </div>
             <span class="hint">Schools offering KG, Primary, and JHS all under one dedicated head.</span>
@@ -974,28 +974,28 @@
         <div class="stat-group-title">Second Cycle</div>
         <div class="stat-grid">
           <div class="stat-field">
-            <label for="shs">Number of Standalone Senior High Schools (SHS)</label>
+            <label for="shs">Number of Standalone Senior High Schools (SHS)<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="shs" aria-label="Decrease">−</button>
-              <input type="number" id="shs" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="shs" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="shs" aria-label="Increase">+</button>
             </div>
             <span class="hint">General academic-track SHS with their own dedicated head. Excludes SHTS, TVET, and STEM Schools.</span>
           </div>
           <div class="stat-field">
-            <label for="shts">Number of Standalone Senior High Technical Schools (SHTS)</label>
+            <label for="shts">Number of Standalone Senior High Technical Schools (SHTS)<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="shts" aria-label="Decrease">−</button>
-              <input type="number" id="shts" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="shts" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="shts" aria-label="Increase">+</button>
             </div>
             <span class="hint">Senior High Technical Schools with their own dedicated head. Excludes general SHS, TVET, and STEM Schools.</span>
           </div>
           <div class="stat-field">
-            <label for="tvet">Number of Standalone TVET Institutions</label>
+            <label for="tvet">Number of Standalone TVET Institutions<span class="req">*</span></label>
             <div class="stepper">
               <button type="button" class="step-btn" data-step="-1" data-target="tvet" aria-label="Decrease">−</button>
-              <input type="number" id="tvet" inputmode="numeric" min="0" step="1" />
+              <input type="number" id="tvet" inputmode="numeric" min="0" step="1" placeholder="0" required />
               <button type="button" class="step-btn" data-step="1" data-target="tvet" aria-label="Increase">+</button>
             </div>
             <span class="hint">Technical and Vocational Education and Training institutions with their own dedicated head. Excludes general SHS, SHTS, and STEM Schools.</span>
@@ -1146,7 +1146,7 @@
     "Afigya Kwabre North District","Afigya Kwabre South District",
     "Ahafo Ano North District","Ahafo Ano South East District","Ahafo Ano South-West District",
     "Akrofuom District","Amansie Central District","Amansie South District","Amansie West District",
-    "Asante Akim Central Municipal","Asante Akim North Municipal","Asante Akim South District",
+    "Asante Akim Central Municipal","Asante Akim North District","Asante Akim South District",
     "Asokore Mampong Municipal","Asokwa Municipal",
     "Atwima Kwanwoma District","Atwima Mponua District","Atwima Nwabiagya Municipal","Atwima Nwabiagya North District",
     "Bekwai Municipal","Bosome Freho District","Bosomtwe District",
@@ -1169,6 +1169,7 @@
   const PHONE_REGEX = /^0\d{9}$/;
   const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const GPS_REGEX = /^[A-Z0-9]{2}-\d{4}-\d{4}$/;
+  const STAFF_ID_MIN_LENGTH = 3;
 
   const statusSelect = document.getElementById("mmdeoStatus");
   const mmdaSelect = document.getElementById("mmdaName");
@@ -1271,7 +1272,9 @@
     const phoneOk2 = PHONE_REGEX.test(document.getElementById("officerPhone").value.trim());
     const emailOk = EMAIL_REGEX.test(document.getElementById("officerEmail").value.trim());
     const gpsOk = GPS_REGEX.test(document.getElementById("mmdeoGps").value.trim());
-    const ready = allRequiredFilled && phoneOk1 && phoneOk2 && emailOk && gpsOk && mmdaConfirmed;
+    const staffIdOk1 = document.getElementById("directorStaffId").value.trim().length >= STAFF_ID_MIN_LENGTH;
+    const staffIdOk2 = document.getElementById("officerStaffId").value.trim().length >= STAFF_ID_MIN_LENGTH;
+    const ready = allRequiredFilled && phoneOk1 && phoneOk2 && emailOk && gpsOk && staffIdOk1 && staffIdOk2 && mmdaConfirmed;
     submitBtn.disabled = !ready || submitBtn.classList.contains("loading");
   }
    form.addEventListener("input", updateProgress);
@@ -1324,6 +1327,7 @@
     if (el.id === "directorPhone" || el.id === "officerPhone") return val !== "" ? PHONE_REGEX.test(val) : null;
     if (el.id === "officerEmail") return val !== "" ? EMAIL_REGEX.test(val) : null;
     if (el.id === "mmdeoGps") return val !== "" ? GPS_REGEX.test(val) : null;
+    if (el.id === "directorStaffId" || el.id === "officerStaffId") return val !== "" ? val.length >= STAFF_ID_MIN_LENGTH : null;
     if (el.hasAttribute("required")) return val !== "";
     return null;
   }
@@ -1350,9 +1354,9 @@
   const sectionIds = ["sec-mmda", "sec-director", "sec-officer", "sec-stats"];
   const sectionFieldMap = {
     "sec-mmda": ["mmdeoStatus", "mmdeoEmis", "mmdeoGps"],
-    "sec-director": ["directorName", "directorSex", "directorPhone"],
-    "sec-officer": ["officerFirstName", "officerSurname", "officerSex", "officerStaffId", "officerPhone", "officerEmail"],
-    "sec-stats": ["totalCircuits"]
+    "sec-director": ["directorName", "directorSex", "directorStaffId", "directorPhone"],
+    "sec-officer": ["officerFirstName", "officerSurname", "officerSex", "officerStaffId", "officerPhone", "officerEmail", "dobDay", "dobMonth", "dobYear"],
+    "sec-stats": ["totalCircuits", "specialSchools", "stemSchools", "kgOnly", "primaryOnly", "jhsOnly", "kgPrimary", "kgJhs", "primaryJhs", "basicSchools", "shs", "shts", "tvet"]
   };
   const navPills = Array.from(document.querySelectorAll(".nav-pill"));
 
@@ -1876,7 +1880,7 @@
       return;
     }
     if (!validateForm()) {
-      showMessage("Please fill all required fields correctly before submitting — check the phone numbers (10 digits), email, and GhanaPOST GPS format.", "error");
+      showMessage("Please fill all required fields correctly before submitting — check the phone numbers (10 digits), email, GhanaPOST GPS format, and Staff IDs (at least 3 characters).", "error");
       return;
     }
 
