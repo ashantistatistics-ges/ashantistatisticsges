@@ -723,7 +723,7 @@
           </div>
                    <div class="field">
             <label for="mmdeoGps">GhanaPOST GPS of MMDEO<span class="req">*</span></label>
-                     <input type="text" id="mmdeoGps" placeholder="e.g. AK-0039-5028" maxlength="12" autocomplete="off" inputmode="text" pattern="[A-Za-z]*" required />
+                     <input type="text" id="mmdeoGps" placeholder="e.g. AK-0039-5028" maxlength="12" autocomplete="off" inputmode="text" pattern="[A-Za-z0-9]*" required />
             <span class="hint" id="gpsHint">Just type the letters and numbers — the dashes are added automatically (e.g. AK-0039-5028).</span>
           </div>
         </div>
@@ -1168,7 +1168,7 @@
 
   const PHONE_REGEX = /^0\d{9}$/;
   const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const GPS_REGEX = /^[A-Z]{2}-\d{4}-\d{4}$/;
+  const GPS_REGEX = /^[A-Z0-9]{2}-\d{4}-\d{4}$/;
 
   const statusSelect = document.getElementById("mmdeoStatus");
   const mmdaSelect = document.getElementById("mmdaName");
@@ -1515,17 +1515,10 @@
   // Dashes are inserted automatically as the user types; they never type "-" themselves.
        function formatGhanaGps(raw) {
     const cleanAll = raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
-    let letters = "";
-    let rest = cleanAll;
-    while (letters.length < 2 && rest.length > 0) {
-      const ch = rest[0];
-      rest = rest.slice(1);
-      if (/[A-Z]/.test(ch)) letters += ch;
-      // any digit typed before two letters are collected is discarded
-    }
-    let digits = rest.replace(/[^0-9]/g, "").slice(0, 8);
-    let out = letters;
-    if (letters.length === 2) out += "-";
+    const first = cleanAll.slice(0, 2);
+    let digits = cleanAll.slice(2).replace(/[^0-9]/g, "").slice(0, 8);
+    let out = first;
+    if (first.length === 2) out += "-";
     out += digits.slice(0, 4);
     if (digits.length >= 4) out += "-";
     out += digits.slice(4, 8);
@@ -1538,10 +1531,10 @@
   function updateGpsKeyboardMode() {
     if (!gpsInput) return;
     const clean = gpsInput.value.replace(/[^A-Z0-9]/g, "");
-    const letters = clean.slice(0, 2).replace(/[0-9]/g, "");
-    if (letters.length < 2) {
+    const first = clean.slice(0, 2);
+    if (first.length < 2) {
       gpsInput.setAttribute("inputmode", "text");
-      gpsInput.setAttribute("pattern", "[A-Za-z]*");
+      gpsInput.setAttribute("pattern", "[A-Za-z0-9]*");
     } else {
       gpsInput.setAttribute("inputmode", "numeric");
       gpsInput.setAttribute("pattern", "[0-9]*");
@@ -1551,11 +1544,11 @@
   function updateGpsHint() {
     if (!gpsHint) return;
     const clean = gpsInput.value.replace(/[^A-Z0-9]/g, "");
-    const letters = clean.slice(0, 2).replace(/[0-9]/g, "");
-    const digits = clean.slice(letters.length).replace(/[^0-9]/g, "");
+    const first = clean.slice(0, 2);
+    const digits = clean.slice(first.length).replace(/[^0-9]/g, "");
        let alert = false;
-      if (letters.length < 2) {
-      gpsHint.textContent = "Letters only for the first two characters — type two letters (e.g. AK). Numbers aren't allowed yet.";
+      if (first.length < 2) {
+      gpsHint.textContent = "Type the first two characters — letters and/or numbers (e.g. AK or 3A).";
       alert = true;
     } else if (digits.length < 4) {
       gpsHint.textContent = "Now type the next four numerical characters (e.g. 0039).";
@@ -1587,7 +1580,7 @@
       const gpsOk = GPS_REGEX.test(gpsInput.value.trim());
       if (gpsInput.value.trim() !== "" && !gpsOk && gpsHint) {
         gpsHint.classList.add("hint-alert");
-        gpsHint.textContent = "Format must be two letters, four numbers, four numbers (e.g. AK-0039-5028).";
+        gpsHint.textContent = "Format must be two characters (letters and/or numbers), four numbers, four numbers (e.g. AK-0039-5028).";
       }
     });
   }
